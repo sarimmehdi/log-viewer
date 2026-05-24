@@ -1,65 +1,76 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useEffect } from 'react';
+import { useDrawerScreenViewModel } from '@/features/drawer/presentation/drawer-screen-viewmodel';
+import { DatesListComponent } from '@/features/drawer/presentation/components/dates-list-component';
+import { SessionsListComponent } from '@/features/drawer/presentation/components/sessions-list-component';
+
+export default function LogViewerApp() {
+  const { isDrawerOpen, toggleDrawer, loadDates } = useDrawerScreenViewModel();
+
+  // Trigger initial data load on mounting (Like LaunchedEffect in Jetpack Compose)
+  useEffect(() => {
+    loadDates();
+  }, [loadDates]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-zinc-950 text-zinc-50 antialiased font-sans">
+      
+      {/* GLOBAL TOP NAVIGATION HEADER */}
+      <header className="flex h-14 w-full items-center border-b border-zinc-800 bg-zinc-900/40 px-4 select-none backdrop-blur-sm">
+        <button
+          onClick={toggleDrawer}
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-300 transition-all hover:bg-zinc-800 hover:text-zinc-50 active:scale-95"
+          aria-label="Toggle navigation drawer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="h-4 w-4"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+        <span className="ml-4 text-xs font-bold uppercase tracking-widest text-zinc-400">
+          LOG TRACKER ENGINE
+        </span>
+      </header>
+
+      {/* CONTAINER BODY WORKSPACE */}
+      <div className="flex h-[calc(100vh-3.5rem)] w-full overflow-hidden">
+        
+        {/* COLLAPSIBLE SIDEBAR DRAWER PANEL */}
+        <aside
+          className={`h-full border-r border-zinc-900 bg-zinc-950 transition-all duration-300 ease-in-out ${
+            isDrawerOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 border-r-0 pointer-events-none'
+          }`}
+        >
+          {/* Content Wrapper preserving widths throughout slide movements */}
+          <div className="w-64 p-4 flex flex-col h-full overflow-y-auto">
+            
+            {/* Mounted Date Selector Section */}
+            <DatesListComponent />
+
+            {/* Mounted Session Selector Section */}
+            <SessionsListComponent />
+
+          </div>
+        </aside>
+
+        {/* MAIN CONSOLE FEED DISPLAY WINDOW */}
+        <main className="flex-1 h-full overflow-y-auto p-8 bg-zinc-950 select-text">
+          <div className="max-w-3xl">
+            <h1 className="text-xl font-bold tracking-tight text-zinc-100 font-mono">Main Console Monitor</h1>
+            <p className="mt-2 text-xs text-zinc-400 leading-relaxed max-w-xl">
+              Click on an operational log history date in the left drawer to load individual recording instances. Once selected, sessions will pop up smoothly underneath.
+            </p>
+          </div>
+        </main>
+
+      </div>
     </div>
   );
 }

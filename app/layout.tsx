@@ -23,11 +23,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className="h-full">
+      {/* Make sure the body has h-full and doesn't forcefully impose flex layouts if children manage it */}
+      <body className="h-full bg-zinc-950 text-zinc-50 antialiased">
+        {children}
+      </body>
     </html>
   );
 }
