@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { DatesListComponent } from '../../components/dates-list-component';
-import { useDrawerScreenViewModel } from '../../drawer-screen-viewmodel';
+import { DatesListComponent } from '@/features/drawer/presentation/components/dates-list-component';
+import { useDrawerScreenViewModel } from '@/features/drawer/presentation/drawer-screen-viewmodel';
 
 jest.mock('../../drawer-screen-viewmodel', () => ({
   useDrawerScreenViewModel: jest.fn(),

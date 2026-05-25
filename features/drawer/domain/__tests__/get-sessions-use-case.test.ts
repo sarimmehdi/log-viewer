@@ -1,6 +1,6 @@
-import { GetSessionsUseCase } from '../usecase/get-sessions-usecase';
-import { DrawerRepository } from '../repository/drawer-repository';
-import { LogSession } from '../model/log-session';
+import { GetSessionsUseCase } from '@/features/drawer/domain/usecase/get-sessions-usecase';
+import { DrawerRepository } from '@/features/drawer/domain/repository/drawer-repository';
+import { LogSession } from '@/features/drawer/domain/model/log-session';
 
 describe('GetSessionsUseCase', () => {
   let mockRepository: jest.Mocked<DrawerRepository>;

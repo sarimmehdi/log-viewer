@@ -4,11 +4,11 @@ import { useEffect } from 'react';
 import { useDrawerScreenViewModel } from '@/features/drawer/presentation/drawer-screen-viewmodel';
 import { DatesListComponent } from '@/features/drawer/presentation/components/dates-list-component';
 import { SessionsListComponent } from '@/features/drawer/presentation/components/sessions-list-component';
+import { LogListComponent } from '@/features/main/presentation/components/log-list-component';
 
 export default function LogViewerApp() {
   const { isDrawerOpen, toggleDrawer, loadDates } = useDrawerScreenViewModel();
 
-  // Trigger initial data load on mounting (Like LaunchedEffect in Jetpack Compose)
   useEffect(() => {
     loadDates();
   }, [loadDates]);
@@ -50,19 +50,17 @@ export default function LogViewerApp() {
             isDrawerOpen ? 'w-64 opacity-100' : 'w-0 opacity-0 border-r-0 pointer-events-none'
           }`}
         >
-          {/* Content Wrapper preserving widths throughout slide movements */}
           <div className="w-64 p-4 flex flex-col h-full overflow-y-auto">
-            {/* Mounted Date Selector Section */}
             <DatesListComponent />
-
-            {/* Mounted Session Selector Section */}
             <SessionsListComponent />
           </div>
         </aside>
 
         {/* MAIN CONSOLE FEED DISPLAY WINDOW */}
-        <main className="flex-1 h-full overflow-y-auto p-8 bg-zinc-950 select-text">
-          <div className="max-w-3xl">
+        {/* Changed: Turned main into a flex column layout that limits heights cleanly */}
+        <main className="flex-1 h-full flex flex-col p-8 bg-zinc-950 select-text overflow-hidden">
+          {/* Static Header Meta Content */}
+          <div className="mb-6 flex-shrink-0">
             <h1 className="text-xl font-bold tracking-tight text-zinc-100 font-mono">
               Main Console Monitor
             </h1>
@@ -70,6 +68,12 @@ export default function LogViewerApp() {
               Click on an operational log history date in the left drawer to load individual
               recording instances. Once selected, sessions will pop up smoothly underneath.
             </p>
+          </div>
+
+          {/* ─── MOUNT THE SCROLLABLE LOG GRID HERE ─── */}
+          {/* Wrapper container ensures the grid handles nested scrolls independently */}
+          <div className="flex-1 min-h-0 w-full">
+            <LogListComponent />
           </div>
         </main>
       </div>

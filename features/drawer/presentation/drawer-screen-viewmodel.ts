@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { DrawerScreenState } from './drawer-screen-state';
 import { DrawerScreenToViewModelEvents } from './drawer-screen-to-viewmodel-events';
-import { drawerUseCases } from '../di/module';
+import { drawerUseCases } from '@/features/drawer/di/module';
 import { toast } from 'sonner';
 
 export const useDrawerScreenViewModel = create<DrawerScreenState & DrawerScreenToViewModelEvents>(
@@ -45,6 +45,8 @@ export const useDrawerScreenViewModel = create<DrawerScreenState & DrawerScreenT
         isLoadingSessions: true,
       });
 
+      drawerUseCases.updatedSelectedScopeUseCase.clear();
+
       try {
         const sessions = await drawerUseCases.getSessionsUseCase.execute(dateId, currentSelected);
 
@@ -74,8 +76,15 @@ export const useDrawerScreenViewModel = create<DrawerScreenState & DrawerScreenT
       }
     },
 
-    selectSession: (sessionId: number) => {
+    selectSession: async (sessionId: number) => {
+      const currentSelectedSession = get().selectedSessionId;
+      const currentSelectedDate = get().selectedDateId;
+
+      if (sessionId === currentSelectedSession || currentSelectedDate === null) {
+        return;
+      }
       set({ selectedSessionId: sessionId });
+      drawerUseCases.updatedSelectedScopeUseCase.execute(currentSelectedDate, sessionId);
     },
   }),
 );

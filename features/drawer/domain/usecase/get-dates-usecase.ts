@@ -1,5 +1,5 @@
-import { LogDate } from '../model/log-date';
-import { DrawerRepository } from '../repository/drawer-repository';
+import { LogDate } from '@/features/drawer/domain/model/log-date';
+import { DrawerRepository } from '@/features/drawer/domain/repository/drawer-repository';
 
 export class GetDatesUseCase {
   constructor(private repository: DrawerRepository) {}

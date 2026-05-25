@@ -1,5 +1,5 @@
-import { LogDate } from '../domain/model/log-date';
-import { LogSession } from '../domain/model/log-session';
+import { LogDate } from '@/features/drawer/domain/model/log-date';
+import { LogSession } from '@/features/drawer/domain/model/log-session';
 
 export interface DrawerScreenState {
   isDrawerOpen: boolean;

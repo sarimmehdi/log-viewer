@@ -1,6 +1,6 @@
-import { LogDate } from '../../domain/model/log-date';
-import { LogSession } from '../../domain/model/log-session';
-import { DrawerRepository } from '../../domain/repository/drawer-repository';
+import { LogDate } from '@/features/drawer/domain/model/log-date';
+import { LogSession } from '@/features/drawer/domain/model/log-session';
+import { DrawerRepository } from '@/features/drawer/domain/repository/drawer-repository';
 
 export class MockDrawerRepository implements DrawerRepository {
   private mockDates: LogDate[] = [

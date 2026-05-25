@@ -14,6 +14,20 @@ const eslintConfig = defineConfig([
         version: '19.0.0',
       },
     },
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../**', '**/../**'],
+              message:
+                'Please use absolute path aliases (@/features/...) instead of multi-level relative paths.',
+            },
+          ],
+        },
+      ],
+    },
   },
 ]);
 

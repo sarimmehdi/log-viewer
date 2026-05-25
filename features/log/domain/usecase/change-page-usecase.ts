@@ -1,4 +1,4 @@
-import { LogRepository } from '../repository/log-repository';
+import { LogRepository } from '@/features/log/domain/repository/log-repository';
 
 export class ChangePageUseCase {
   constructor(private repository: LogRepository) {}

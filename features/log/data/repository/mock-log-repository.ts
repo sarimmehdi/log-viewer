@@ -1,23 +1,29 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { LogRepository } from '../../domain/repository/log-repository';
-import { Log } from '../../domain/model/log';
-import { Level } from '../../domain/model/level';
+import { LogRepository } from '@/features/log/domain/repository/log-repository';
+import { Log } from '@/features/log/domain/model/log';
+import { Level } from '@/features/log/domain/model/level';
 
 export class MockLogRepository implements LogRepository {
   private currentPage = 1;
-  ITEMS_PER_PAGE = 10;
+  private readonly ITEMS_PER_PAGE = 10;
 
   private totalLogsPool: Log[] = [];
-
   private logs$ = new BehaviorSubject<Log[]>([]);
-
-  constructor(selectedDateId: number, selectedSessionId: number) {
-    this.generateMockLogsPool(selectedDateId, selectedSessionId);
-    this.emitCurrentPage();
-  }
 
   getLogs(): Observable<Log[]> {
     return this.logs$.asObservable();
+  }
+
+  updateSelectedScope(dateId: number, sessionId: number): void {
+    this.currentPage = 1;
+    this.generateMockLogsPool(dateId, sessionId);
+    this.emitCurrentPage();
+  }
+
+  clearSelectedScope(): void {
+    this.currentPage = 1;
+    this.totalLogsPool = [];
+    this.logs$.next([]);
   }
 
   nextPage(): void {
@@ -44,6 +50,11 @@ export class MockLogRepository implements LogRepository {
   }
 
   private emitCurrentPage(): void {
+    if (this.totalLogsPool.length === 0) {
+      this.logs$.next([]);
+      return;
+    }
+
     const startIndex = (this.currentPage - 1) * this.ITEMS_PER_PAGE;
     const endIndex = startIndex + this.ITEMS_PER_PAGE;
     const pageChunk = this.totalLogsPool.slice(startIndex, endIndex);

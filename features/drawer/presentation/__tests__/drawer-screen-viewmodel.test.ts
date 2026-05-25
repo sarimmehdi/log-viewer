@@ -1,5 +1,5 @@
-import { useDrawerScreenViewModel } from '../drawer-screen-viewmodel';
-import { drawerUseCases } from '../../di/module';
+import { useDrawerScreenViewModel } from '@/features/drawer/presentation/drawer-screen-viewmodel';
+import { drawerUseCases } from '@/features/drawer/di/module';
 import { toast } from 'sonner';
 
 jest.mock('../../di/module', () => ({

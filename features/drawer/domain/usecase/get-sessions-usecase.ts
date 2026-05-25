@@ -1,5 +1,5 @@
-import { LogSession } from '../model/log-session';
-import { DrawerRepository } from '../repository/drawer-repository';
+import { LogSession } from '@/features/drawer/domain/model/log-session';
+import { DrawerRepository } from '@/features/drawer/domain/repository/drawer-repository';
 
 export class GetSessionsUseCase {
   constructor(private repository: DrawerRepository) {}

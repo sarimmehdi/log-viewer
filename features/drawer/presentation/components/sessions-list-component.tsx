@@ -1,6 +1,6 @@
 'use client';
 
-import { useDrawerScreenViewModel } from '../drawer-screen-viewmodel';
+import { useDrawerScreenViewModel } from '@/features/drawer/presentation/drawer-screen-viewmodel';
 
 export function SessionsListComponent() {
   const { sessions, selectedSessionId, selectSession, selectedDateId, isLoadingSessions } =

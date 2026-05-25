@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { SessionsListComponent } from '../../components/sessions-list-component';
-import { useDrawerScreenViewModel } from '../../drawer-screen-viewmodel';
+import { SessionsListComponent } from '@/features/drawer/presentation/components/sessions-list-component';
+import { useDrawerScreenViewModel } from '@/features/drawer/presentation/drawer-screen-viewmodel';
 
 jest.mock('../../drawer-screen-viewmodel', () => ({
   useDrawerScreenViewModel: jest.fn(),

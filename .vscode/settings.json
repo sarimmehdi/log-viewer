@@ -4,5 +4,14 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
+  },
+  "[javascript]": {
+    "js/ts.preferences.importModuleSpecifier": "non-relative"
+  },
+  "[typescript]": {
+    "js/ts.preferences.importModuleSpecifier": "non-relative"
+  },
+  "[typescriptreact]": {
+    "js/ts.preferences.importModuleSpecifier": "non-relative"
   }
 }
