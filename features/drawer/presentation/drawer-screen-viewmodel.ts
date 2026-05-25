@@ -32,20 +32,41 @@ export const useDrawerScreenViewModel = create<DrawerScreenState & DrawerScreenT
 
     selectDate: async (dateId: number) => {
       const currentSelected = get().selectedDateId;
-      set({ isLoadingSessions: dateId !== currentSelected });
+      const currentlyLoading = get().isLoadingSessions;
+
+      if (dateId === currentSelected || currentlyLoading) {
+        return;
+      }
+
+      set({
+        selectedDateId: dateId,
+        selectedSessionId: null,
+        sessions: [],
+        isLoadingSessions: true,
+      });
+
       try {
         const sessions = await drawerUseCases.getSessionsUseCase.execute(dateId, currentSelected);
+
         if (sessions === null) {
+          set({
+            selectedDateId: currentSelected,
+            isLoadingSessions: false,
+          });
           return;
         }
+
         set({
-          selectedDateId: dateId,
-          selectedSessionId: null,
           sessions: sessions,
           isLoadingSessions: false,
         });
       } catch (error) {
-        set({ isLoadingSessions: false });
+        set({
+          selectedDateId: currentSelected,
+          sessions: [],
+          isLoadingSessions: false,
+        });
+
         const errorMessage = error instanceof Error ? error.message : 'Unknown database failure';
         toast.error('Failed to load sessions', {
           description: `Reason: ${errorMessage}`,
