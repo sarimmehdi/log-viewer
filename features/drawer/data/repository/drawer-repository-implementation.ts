@@ -3,7 +3,6 @@ import { LogSession } from '../../domain/model/log-session';
 import { DrawerRepository } from '../../domain/repository/drawer-repository';
 
 export class MockDrawerRepository implements DrawerRepository {
-  // Mock data set matching an ongoing operational log scenario
   private mockDates: LogDate[] = [
     { id: 1, day: 24, month: 5, year: 2026, formattedString: '24-05-2026' },
     { id: 2, day: 23, month: 5, year: 2026, formattedString: '23-05-2026' },
@@ -19,19 +18,16 @@ export class MockDrawerRepository implements DrawerRepository {
       { id: 201, name: 'Cron-Job-Nightly-Run' },
       { id: 202, name: 'Database-Migration-Logs' },
     ],
-    3: [
-      { id: 301, name: 'Crashlytics-Dump-01' },
-    ],
+    3: [{ id: 301, name: 'Crashlytics-Dump-01' }],
   };
 
-  // Simulate network latency matching real-world asynchronous operations
   async getAvailableDates(): Promise<LogDate[]> {
-    await new Promise((resolve) => setTimeout(resolve, 300)); // 300ms delay
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return [...this.mockDates];
   }
 
   async getSessionsByDate(dateId: number): Promise<LogSession[]> {
-    await new Promise((resolve) => setTimeout(resolve, 250)); // 250ms delay
+    await new Promise((resolve) => setTimeout(resolve, 250));
     return this.mockSessions[dateId] ? [...this.mockSessions[dateId]] : [];
   }
 }

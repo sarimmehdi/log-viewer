@@ -1,5 +1,5 @@
-import { LogDate } from "../model/log-date";
-import { LogSession } from "../model/log-session";
+import { LogDate } from '../model/log-date';
+import { LogSession } from '../model/log-session';
 
 export interface DrawerRepository {
   getAvailableDates(): Promise<LogDate[]>;

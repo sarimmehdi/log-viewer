@@ -3,7 +3,8 @@
 import { useDrawerScreenViewModel } from '../drawer-screen-viewmodel';
 
 export function SessionsListComponent() {
-  const { sessions, selectedSessionId, selectSession, selectedDateId, isLoadingSessions } = useDrawerScreenViewModel();
+  const { sessions, selectedSessionId, selectSession, selectedDateId, isLoadingSessions } =
+    useDrawerScreenViewModel();
 
   // If no date has been clicked yet, keep this area cleanly empty
   if (!selectedDateId) return null;
@@ -19,9 +20,7 @@ export function SessionsListComponent() {
           Fetching log index...
         </div>
       ) : sessions.length === 0 ? (
-        <div className="text-[11px] italic text-zinc-600 px-2">
-          No logs found for this date.
-        </div>
+        <div className="text-[11px] italic text-zinc-600 px-2">No logs found for this date.</div>
       ) : (
         <div className="flex flex-col gap-1 max-h-60 overflow-y-auto pr-1">
           {sessions.map((sessionItem) => {

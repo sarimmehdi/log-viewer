@@ -18,10 +18,10 @@ export function DatesListComponent() {
       <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 px-2 mb-1">
         Log History (Dates)
       </h3>
-      
+
       {dates.map((dateItem) => {
         const isActive = selectedDateId === dateItem.id;
-        
+
         return (
           <button
             key={dateItem.id} // Equivalent to assigning an item key in a LazyColumn

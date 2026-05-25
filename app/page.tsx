@@ -15,7 +15,6 @@ export default function LogViewerApp() {
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-zinc-950 text-zinc-50 antialiased font-sans">
-      
       {/* GLOBAL TOP NAVIGATION HEADER */}
       <header className="flex h-14 w-full items-center border-b border-zinc-800 bg-zinc-900/40 px-4 select-none backdrop-blur-sm">
         <button
@@ -31,7 +30,11 @@ export default function LogViewerApp() {
             stroke="currentColor"
             className="h-4 w-4"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
           </svg>
         </button>
         <span className="ml-4 text-xs font-bold uppercase tracking-widest text-zinc-400">
@@ -41,7 +44,6 @@ export default function LogViewerApp() {
 
       {/* CONTAINER BODY WORKSPACE */}
       <div className="flex h-[calc(100vh-3.5rem)] w-full overflow-hidden">
-        
         {/* COLLAPSIBLE SIDEBAR DRAWER PANEL */}
         <aside
           className={`h-full border-r border-zinc-900 bg-zinc-950 transition-all duration-300 ease-in-out ${
@@ -50,26 +52,26 @@ export default function LogViewerApp() {
         >
           {/* Content Wrapper preserving widths throughout slide movements */}
           <div className="w-64 p-4 flex flex-col h-full overflow-y-auto">
-            
             {/* Mounted Date Selector Section */}
             <DatesListComponent />
 
             {/* Mounted Session Selector Section */}
             <SessionsListComponent />
-
           </div>
         </aside>
 
         {/* MAIN CONSOLE FEED DISPLAY WINDOW */}
         <main className="flex-1 h-full overflow-y-auto p-8 bg-zinc-950 select-text">
           <div className="max-w-3xl">
-            <h1 className="text-xl font-bold tracking-tight text-zinc-100 font-mono">Main Console Monitor</h1>
+            <h1 className="text-xl font-bold tracking-tight text-zinc-100 font-mono">
+              Main Console Monitor
+            </h1>
             <p className="mt-2 text-xs text-zinc-400 leading-relaxed max-w-xl">
-              Click on an operational log history date in the left drawer to load individual recording instances. Once selected, sessions will pop up smoothly underneath.
+              Click on an operational log history date in the left drawer to load individual
+              recording instances. Once selected, sessions will pop up smoothly underneath.
             </p>
           </div>
         </main>
-
       </div>
     </div>
   );
