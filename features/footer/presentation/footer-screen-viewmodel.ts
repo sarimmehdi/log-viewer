@@ -4,6 +4,7 @@ import { FooterScreenState } from './footer-screen-state';
 import { FooterScreenToViewModelEvents } from './footer-screen-to-viewmodel-events';
 import { toast } from 'sonner';
 import { footerUseCases } from '@/features/footer/di/module';
+import { ERROR_MESSAGES } from '@/utils/ui-text';
 
 interface FooterViewModelProps {
   initViewModel: () => () => void;
@@ -21,16 +22,23 @@ export const useFooterScreenViewModel = create<
 
     initViewModel: () => {
       paginationSubscription = footerUseCases.currentPageUseCase.execute().subscribe({
-        next: (state) => {
-          set({
-            currentPage: state.currentPage,
-            isFirstPage: state.isFirstPage,
-            isLastPage: state.isLastPage,
-          });
+        next: (result) => {
+          if (result.type === 'success') {
+            set({
+              currentPage: result.data.currentPage,
+              isFirstPage: result.data.isFirstPage,
+              isLastPage: result.data.isLastPage,
+            });
+          } else {
+            const friendlyText = ERROR_MESSAGES[result.error] ?? ERROR_MESSAGES.UNKNOWN;
+            toast.error('Failed to sync pagination stream', {
+              description: `Reason: ${friendlyText}`,
+            });
+          }
         },
         error: (error) => {
-          const errorMessage = error instanceof Error ? error.message : 'Pagination pipe failure';
-          toast.error('Failed to sync pagination stream', {
+          const errorMessage = error instanceof Error ? error.message : 'Fatal stream failure';
+          toast.error('Fatal data stream disconnection', {
             description: `Reason: ${errorMessage}`,
           });
         },
@@ -49,15 +57,16 @@ export const useFooterScreenViewModel = create<
       if (isFirstPage) return;
 
       const previousPage = currentPage;
+
       set({ currentPage: 1, isFirstPage: true, isLastPage: false });
 
-      try {
-        footerUseCases.changePageUseCase.firstPage();
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : 'Unknown rejection';
+      const result = footerUseCases.changePageUseCase.firstPage();
+
+      if (result.type === 'failure') {
         set({ currentPage: previousPage, isFirstPage: false });
+        const friendlyText = ERROR_MESSAGES[result.error] ?? ERROR_MESSAGES.UNKNOWN;
         toast.error('Failed to navigate to first page', {
-          description: `Reason: ${msg}`,
+          description: `Reason: ${friendlyText}`,
         });
       }
     },
@@ -67,15 +76,16 @@ export const useFooterScreenViewModel = create<
       if (isLastPage) return;
 
       const previousPage = currentPage;
+
       set({ isFirstPage: false, isLastPage: true });
 
-      try {
-        footerUseCases.changePageUseCase.lastPage();
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : 'Unknown rejection';
+      const result = footerUseCases.changePageUseCase.lastPage();
+
+      if (result.type === 'failure') {
         set({ currentPage: previousPage, isLastPage: false, isFirstPage: previousPage === 1 });
+        const friendlyText = ERROR_MESSAGES[result.error] ?? ERROR_MESSAGES.UNKNOWN;
         toast.error('Failed to navigate to last page', {
-          description: `Reason: ${msg}`,
+          description: `Reason: ${friendlyText}`,
         });
       }
     },
@@ -85,15 +95,16 @@ export const useFooterScreenViewModel = create<
       if (isLastPage) return;
 
       const previousPage = currentPage;
+
       set({ currentPage: previousPage + 1, isFirstPage: false });
 
-      try {
-        footerUseCases.changePageUseCase.nextPage();
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : 'Unknown rejection';
+      const result = footerUseCases.changePageUseCase.nextPage();
+
+      if (result.type === 'failure') {
         set({ currentPage: previousPage, isFirstPage: previousPage === 1 });
+        const friendlyText = ERROR_MESSAGES[result.error] ?? ERROR_MESSAGES.UNKNOWN;
         toast.error('Navigation step failed', {
-          description: `Reason: ${msg}`,
+          description: `Reason: ${friendlyText}`,
         });
       }
     },
@@ -103,15 +114,16 @@ export const useFooterScreenViewModel = create<
       if (isFirstPage) return;
 
       const previousPage = currentPage;
+
       set({ currentPage: previousPage - 1, isLastPage: false });
 
-      try {
-        footerUseCases.changePageUseCase.prevPage();
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : 'Unknown rejection';
+      const result = footerUseCases.changePageUseCase.prevPage();
+
+      if (result.type === 'failure') {
         set({ currentPage: previousPage, isLastPage: get().isLastPage });
+        const friendlyText = ERROR_MESSAGES[result.error] ?? ERROR_MESSAGES.UNKNOWN;
         toast.error('Navigation step failed', {
-          description: `Reason: ${msg}`,
+          description: `Reason: ${friendlyText}`,
         });
       }
     },
@@ -121,15 +133,16 @@ export const useFooterScreenViewModel = create<
       if (page === currentPage || page < 1) return;
 
       const previousPage = currentPage;
+
       set({ currentPage: page });
 
-      try {
-        footerUseCases.changePageUseCase.goToPage(page);
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : 'Unknown rejection';
+      const result = footerUseCases.changePageUseCase.goToPage(page);
+
+      if (result.type === 'failure') {
         set({ currentPage: previousPage });
+        const friendlyText = ERROR_MESSAGES[result.error] ?? ERROR_MESSAGES.UNKNOWN;
         toast.error(`Could not navigate to page ${page}`, {
-          description: `Reason: ${msg}`,
+          description: `Reason: ${friendlyText}`,
         });
       }
     },

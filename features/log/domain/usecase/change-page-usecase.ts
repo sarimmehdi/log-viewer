@@ -1,25 +1,26 @@
 import { LogRepository } from '@/features/log/domain/repository/log-repository';
+import { Result } from '@/utils/result';
 
 export class ChangePageUseCase {
   constructor(private repository: LogRepository) {}
 
-  nextPage(): void {
-    this.repository.nextPage();
+  nextPage(): Result<void> {
+    return this.repository.nextPage();
   }
 
-  firstPage(): void {
-    this.repository.firstPage();
+  firstPage(): Result<void> {
+    return this.repository.firstPage();
   }
 
-  lastPage(): void {
-    this.repository.lastPage();
+  lastPage(): Result<void> {
+    return this.repository.lastPage();
   }
 
-  prevPage(): void {
-    this.repository.prevPage();
+  prevPage(): Result<void> {
+    return this.repository.prevPage();
   }
 
-  goToPage(page: number): void {
-    this.repository.goToPage(page);
+  goToPage(page: number): Result<void> {
+    return this.repository.goToPage(page);
   }
 }

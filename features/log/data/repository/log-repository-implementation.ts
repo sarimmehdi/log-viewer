@@ -3,89 +3,122 @@ import { LogRepository } from '@/features/log/domain/repository/log-repository';
 import { Log } from '@/features/log/domain/model/log';
 import { Level } from '@/features/log/domain/model/level';
 import { PaginationState } from '@/features/log/data/paging/pagination-state';
+import { Result, ResultFactory } from '@/utils/result';
 
 export class MockLogRepository implements LogRepository {
   private currentPage = 1;
   private readonly ITEMS_PER_PAGE = 10;
 
   private totalLogsPool: Log[] = [];
-  private logs$ = new BehaviorSubject<Log[]>([]);
+  private logs$ = new BehaviorSubject<Result<Log[]>>(ResultFactory.success([]));
+  private pagination$ = new BehaviorSubject<Result<PaginationState>>(
+    ResultFactory.success({
+      currentPage: 1,
+      isFirstPage: true,
+      isLastPage: true,
+    }),
+  );
+  private isNewSession$ = new BehaviorSubject<Result<boolean>>(ResultFactory.success(true));
 
-  private pagination$ = new BehaviorSubject<PaginationState>({
-    currentPage: 1,
-    isFirstPage: true,
-    isLastPage: true,
-  });
-
-  private isNewSession$ = new BehaviorSubject<boolean>(true);
-
-  getLogs(): Observable<Log[]> {
+  getLogs(): Observable<Result<Log[]>> {
     return this.logs$.asObservable();
   }
 
-  getPaginationState(): Observable<PaginationState> {
+  getPaginationState(): Observable<Result<PaginationState>> {
     return this.pagination$.asObservable();
   }
 
-  isNewSession(): Observable<boolean> {
+  isNewSession(): Observable<Result<boolean>> {
     return this.isNewSession$.asObservable();
   }
 
-  updateSelectedScope(dateId: number, sessionId: number): void {
-    this.currentPage = 1;
-    this.generateMockLogsPool(dateId, sessionId);
-    this.isNewSession$.next(true);
-    this.emitCurrentPageAndState();
+  updateSelectedScope(dateId: number, sessionId: number): Result<void> {
+    try {
+      this.currentPage = 1;
+      this.generateMockLogsPool(dateId, sessionId);
+      this.isNewSession$.next(ResultFactory.success(true));
+      this.emitCurrentPageAndState();
+      return ResultFactory.success(undefined);
+    } catch (error) {
+      return ResultFactory.failure('DATABASE_ERROR');
+    }
   }
 
   clearSelectedScope(): void {
     this.currentPage = 1;
     this.totalLogsPool = [];
-    this.logs$.next([]);
-    this.pagination$.next({ currentPage: 1, isFirstPage: true, isLastPage: true });
-    this.isNewSession$.next(false);
+    this.logs$.next(ResultFactory.success([]));
+    this.pagination$.next(
+      ResultFactory.success({ currentPage: 1, isFirstPage: true, isLastPage: true }),
+    );
+    this.isNewSession$.next(ResultFactory.success(false));
   }
 
-  nextPage(): void {
-    const maxPages = this.getMaxPages();
-    if (this.currentPage < maxPages) {
-      this.currentPage++;
-      this.isNewSession$.next(false);
-      this.emitCurrentPageAndState();
+  nextPage(): Result<void> {
+    try {
+      const maxPages = this.getMaxPages();
+      if (this.currentPage < maxPages) {
+        this.currentPage++;
+        this.isNewSession$.next(ResultFactory.success(false));
+        this.emitCurrentPageAndState();
+      }
+      return ResultFactory.success(undefined);
+    } catch (error) {
+      return ResultFactory.failure('DATABASE_ERROR');
     }
   }
 
-  lastPage(): void {
-    const maxPages = this.getMaxPages();
-    if (this.currentPage !== maxPages && maxPages > 0) {
-      this.currentPage = maxPages;
-      this.isNewSession$.next(false);
-      this.emitCurrentPageAndState();
+  lastPage(): Result<void> {
+    try {
+      const maxPages = this.getMaxPages();
+      if (this.currentPage !== maxPages && maxPages > 0) {
+        this.currentPage = maxPages;
+        this.isNewSession$.next(ResultFactory.success(false));
+        this.emitCurrentPageAndState();
+      }
+      return ResultFactory.success(undefined);
+    } catch (error) {
+      return ResultFactory.failure('DATABASE_ERROR');
     }
   }
 
-  prevPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.isNewSession$.next(false);
-      this.emitCurrentPageAndState();
+  prevPage(): Result<void> {
+    try {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+        this.isNewSession$.next(ResultFactory.success(false));
+        this.emitCurrentPageAndState();
+      }
+      return ResultFactory.success(undefined);
+    } catch (error) {
+      return ResultFactory.failure('DATABASE_ERROR');
     }
   }
 
-  firstPage(): void {
-    if (this.currentPage !== 1) {
-      this.currentPage = 1;
-      this.isNewSession$.next(false);
-      this.emitCurrentPageAndState();
+  firstPage(): Result<void> {
+    try {
+      if (this.currentPage !== 1) {
+        this.currentPage = 1;
+        this.isNewSession$.next(ResultFactory.success(false));
+        this.emitCurrentPageAndState();
+      }
+      return ResultFactory.success(undefined);
+    } catch (error) {
+      return ResultFactory.failure('DATABASE_ERROR');
     }
   }
 
-  goToPage(page: number): void {
-    const maxPages = this.getMaxPages();
-    if (page >= 1 && page <= maxPages && page !== this.currentPage) {
-      this.currentPage = page;
-      this.isNewSession$.next(false);
-      this.emitCurrentPageAndState();
+  goToPage(page: number): Result<void> {
+    try {
+      const maxPages = this.getMaxPages();
+      if (page >= 1 && page <= maxPages && page !== this.currentPage) {
+        this.currentPage = page;
+        this.isNewSession$.next(ResultFactory.success(false));
+        this.emitCurrentPageAndState();
+      }
+      return ResultFactory.success(undefined);
+    } catch (error) {
+      return ResultFactory.failure('DATABASE_ERROR');
     }
   }
 
@@ -97,20 +130,24 @@ export class MockLogRepository implements LogRepository {
     const maxPages = this.getMaxPages();
 
     if (this.totalLogsPool.length === 0) {
-      this.logs$.next([]);
-      this.pagination$.next({ currentPage: 1, isFirstPage: true, isLastPage: true });
+      this.logs$.next(ResultFactory.success([]));
+      this.pagination$.next(
+        ResultFactory.success({ currentPage: 1, isFirstPage: true, isLastPage: true }),
+      );
       return;
     }
 
     const startIndex = (this.currentPage - 1) * this.ITEMS_PER_PAGE;
     const endIndex = startIndex + this.ITEMS_PER_PAGE;
-    this.logs$.next(this.totalLogsPool.slice(startIndex, endIndex));
+    this.logs$.next(ResultFactory.success(this.totalLogsPool.slice(startIndex, endIndex)));
 
-    this.pagination$.next({
-      currentPage: this.currentPage,
-      isFirstPage: this.currentPage === 1,
-      isLastPage: this.currentPage === maxPages || maxPages === 0,
-    });
+    this.pagination$.next(
+      ResultFactory.success({
+        currentPage: this.currentPage,
+        isFirstPage: this.currentPage === 1,
+        isLastPage: this.currentPage === maxPages || maxPages === 0,
+      }),
+    );
   }
 
   private generateMockLogsPool(dateId: number, sessionId: number): void {

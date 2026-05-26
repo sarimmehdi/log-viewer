@@ -1,6 +1,7 @@
 import { LogDate } from '@/features/drawer/domain/model/log-date';
 import { LogSession } from '@/features/drawer/domain/model/log-session';
 import { DrawerRepository } from '@/features/drawer/domain/repository/drawer-repository';
+import { Result, ResultFactory } from '@/utils/result';
 
 export class MockDrawerRepository implements DrawerRepository {
   private mockDates: LogDate[] = [
@@ -21,13 +22,15 @@ export class MockDrawerRepository implements DrawerRepository {
     3: [{ id: 301, name: 'Crashlytics-Dump-01' }],
   };
 
-  async getAvailableDates(): Promise<LogDate[]> {
+  async getAvailableDates(): Promise<Result<LogDate[]>> {
     await new Promise((resolve) => setTimeout(resolve, 300));
-    return [...this.mockDates];
+    return ResultFactory.success([...this.mockDates]);
   }
 
-  async getSessionsByDate(dateId: number): Promise<LogSession[]> {
+  async getSessionsByDate(dateId: number): Promise<Result<LogSession[]>> {
     await new Promise((resolve) => setTimeout(resolve, 250));
-    return this.mockSessions[dateId] ? [...this.mockSessions[dateId]] : [];
+    return this.mockSessions[dateId]
+      ? ResultFactory.success([...this.mockSessions[dateId]])
+      : ResultFactory.failure('DATABASE_ERROR');
   }
 }

@@ -3,6 +3,7 @@ import { DrawerScreenState } from './drawer-screen-state';
 import { DrawerScreenToViewModelEvents } from './drawer-screen-to-viewmodel-events';
 import { drawerUseCases } from '@/features/drawer/di/module';
 import { toast } from 'sonner';
+import { ERROR_MESSAGES } from '@/utils/ui-text';
 
 export const useDrawerScreenViewModel = create<DrawerScreenState & DrawerScreenToViewModelEvents>(
   (set, get) => ({
@@ -18,15 +19,15 @@ export const useDrawerScreenViewModel = create<DrawerScreenState & DrawerScreenT
 
     loadDates: async () => {
       set({ isLoadingDates: true });
-      try {
-        const dates = await drawerUseCases.getDatesUseCase.execute();
-        set({ dates, isLoadingDates: false });
-      } catch (error) {
+
+      const result = await drawerUseCases.getDatesUseCase.execute();
+
+      if (result.type === 'success') {
+        set({ dates: result.data, isLoadingDates: false });
+      } else {
         set({ isLoadingDates: false });
-        const errorMessage = error instanceof Error ? error.message : 'Unknown database failure';
-        toast.error('Failed to load dates', {
-          description: `Reason: ${errorMessage}`,
-        });
+        const friendlyText = ERROR_MESSAGES[result.error] ?? ERROR_MESSAGES.UNKNOWN;
+        toast.error('Failed to load dates', { description: friendlyText });
       }
     },
 
@@ -34,9 +35,7 @@ export const useDrawerScreenViewModel = create<DrawerScreenState & DrawerScreenT
       const currentSelected = get().selectedDateId;
       const currentlyLoading = get().isLoadingSessions;
 
-      if (dateId === currentSelected || currentlyLoading) {
-        return;
-      }
+      if (dateId === currentSelected || currentlyLoading) return;
 
       set({
         selectedDateId: dateId,
@@ -47,32 +46,21 @@ export const useDrawerScreenViewModel = create<DrawerScreenState & DrawerScreenT
 
       drawerUseCases.updatedSelectedScopeUseCase.clear();
 
-      try {
-        const sessions = await drawerUseCases.getSessionsUseCase.execute(dateId, currentSelected);
+      const result = await drawerUseCases.getSessionsUseCase.execute(dateId);
 
-        if (sessions === null) {
-          set({
-            selectedDateId: currentSelected,
-            isLoadingSessions: false,
-          });
-          return;
-        }
-
+      if (result.type === 'success') {
         set({
-          sessions: sessions,
+          sessions: result.data,
           isLoadingSessions: false,
         });
-      } catch (error) {
+      } else {
         set({
           selectedDateId: currentSelected,
           sessions: [],
           isLoadingSessions: false,
         });
-
-        const errorMessage = error instanceof Error ? error.message : 'Unknown database failure';
-        toast.error('Failed to load sessions', {
-          description: `Reason: ${errorMessage}`,
-        });
+        const friendlyText = ERROR_MESSAGES[result.error] ?? ERROR_MESSAGES.UNKNOWN;
+        toast.error('Failed to load sessions', { description: friendlyText });
       }
     },
 
@@ -80,9 +68,8 @@ export const useDrawerScreenViewModel = create<DrawerScreenState & DrawerScreenT
       const currentSelectedSession = get().selectedSessionId;
       const currentSelectedDate = get().selectedDateId;
 
-      if (sessionId === currentSelectedSession || currentSelectedDate === null) {
-        return;
-      }
+      if (sessionId === currentSelectedSession || currentSelectedDate === null) return;
+
       set({ selectedSessionId: sessionId });
       drawerUseCases.updatedSelectedScopeUseCase.execute(currentSelectedDate, sessionId);
     },
