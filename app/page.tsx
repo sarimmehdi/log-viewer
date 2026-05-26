@@ -5,6 +5,7 @@ import { useDrawerScreenViewModel } from '@/features/drawer/presentation/drawer-
 import { DatesListComponent } from '@/features/drawer/presentation/components/dates-list-component';
 import { SessionsListComponent } from '@/features/drawer/presentation/components/sessions-list-component';
 import { LogListComponent } from '@/features/main/presentation/components/log-list-component';
+import { FooterComponent } from '@/features/footer/presentation/components/footer-component';
 
 export default function LogViewerApp() {
   const { isDrawerOpen, toggleDrawer, loadDates } = useDrawerScreenViewModel();
@@ -57,24 +58,30 @@ export default function LogViewerApp() {
         </aside>
 
         {/* MAIN CONSOLE FEED DISPLAY WINDOW */}
-        {/* Changed: Turned main into a flex column layout that limits heights cleanly */}
-        <main className="flex-1 h-full flex flex-col p-8 bg-zinc-950 select-text overflow-hidden">
-          {/* Static Header Meta Content */}
-          <div className="mb-6 flex-shrink-0">
-            <h1 className="text-xl font-bold tracking-tight text-zinc-100 font-mono">
-              Main Console Monitor
-            </h1>
-            <p className="mt-2 text-xs text-zinc-400 leading-relaxed max-w-xl">
-              Click on an operational log history date in the left drawer to load individual
-              recording instances. Once selected, sessions will pop up smoothly underneath.
-            </p>
+        {/* Note: Removing the 'p-8' padding from the main wrapper to allow the footer to cleanly snap full-width against the edges */}
+        <main className="flex-1 h-full flex flex-col bg-zinc-950 select-text overflow-hidden">
+          {/* Main Log View Body Container with explicit content spacing */}
+          <div className="flex-1 flex flex-col p-8 overflow-hidden min-h-0 w-full">
+            {/* Static Header Meta Content */}
+            <div className="mb-6 flex-shrink-0">
+              <h1 className="text-xl font-bold tracking-tight text-zinc-100 font-mono">
+                Main Console Monitor
+              </h1>
+              <p className="mt-2 text-xs text-zinc-400 leading-relaxed max-w-xl">
+                Click on an operational log history date in the left drawer to load individual
+                recording instances. Once selected, sessions will pop up smoothly underneath.
+              </p>
+            </div>
+
+            {/* Scrollable grid element container */}
+            <div className="flex-1 min-h-0 w-full">
+              <LogListComponent />
+            </div>
           </div>
 
-          {/* ─── MOUNT THE SCROLLABLE LOG GRID HERE ─── */}
-          {/* Wrapper container ensures the grid handles nested scrolls independently */}
-          <div className="flex-1 min-h-0 w-full">
-            <LogListComponent />
-          </div>
+          {/* ─── MOUNT THE PAGINATION BAR AT THE FOOTER REGION ─── */}
+          {/* Placing it here guarantees it stretches full-width beneath the scroll viewport */}
+          <FooterComponent />
         </main>
       </div>
     </div>

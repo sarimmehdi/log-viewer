@@ -7,6 +7,14 @@ export class ChangePageUseCase {
     this.repository.nextPage();
   }
 
+  firstPage(): void {
+    this.repository.firstPage();
+  }
+
+  lastPage(): void {
+    this.repository.lastPage();
+  }
+
   prevPage(): void {
     this.repository.prevPage();
   }

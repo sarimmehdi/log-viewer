@@ -8,4 +8,8 @@ export class GetLogsUseCase {
   execute(): Observable<Log[]> {
     return this.repository.getLogs();
   }
+
+  observeSessionChange(): Observable<boolean> {
+    return this.repository.isNewSession();
+  }
 }

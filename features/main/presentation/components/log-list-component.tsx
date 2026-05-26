@@ -5,13 +5,13 @@ import { LogRowComponent } from './log-row-component';
 export const LogListComponent: React.FC = () => {
   const logs = useMainScreenViewModel((state) => state.logs);
   const isLoadingLogs = useMainScreenViewModel((state) => state.isLoadingLogs);
-  const initViewModel = useMainScreenViewModel((state) => state.initViewModel);
+  const getLogs = useMainScreenViewModel((state) => state.getLogs);
 
   // Initialize and tear down reactive data stream pipelines inside useEffect
   useEffect(() => {
-    const teardown = initViewModel();
+    const teardown = getLogs();
     return () => teardown();
-  }, [initViewModel]);
+  }, [getLogs]);
 
   if (isLoadingLogs && logs.length === 0) {
     return (
