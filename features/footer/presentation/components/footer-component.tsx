@@ -34,13 +34,15 @@ export const FooterComponent: React.FC = () => {
         goToPage(parsedPage);
       } else {
         setInputValue(currentPage.toString());
+        e.currentTarget.value = currentPage.toString(); // ← Force DOM synchronization
       }
       e.currentTarget.blur();
     }
   };
 
-  const handleInputBlur = () => {
+  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     setInputValue(currentPage.toString());
+    e.currentTarget.value = currentPage.toString(); // ← Force DOM synchronization
   };
 
   return (

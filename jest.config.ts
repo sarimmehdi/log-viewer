@@ -17,6 +17,13 @@ const config: Config = {
   },
 
   collectCoverage: true,
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '<rootDir>/\\.next/',
+    '<rootDir>/coverage/',
+    '<rootDir>/out/',
+    '<rootDir>/features/[^/]+/data/',
+  ],
   coverageThreshold: {
     global: {
       branches: 80,
